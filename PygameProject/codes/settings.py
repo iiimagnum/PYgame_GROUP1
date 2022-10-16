@@ -1,0 +1,5 @@
+'''settings'''
+WIN_SIZE_X = 500
+WIN_SIZE_Y = 500
+MAZE_ROWS = 20
+MAZE_COLS = 20
