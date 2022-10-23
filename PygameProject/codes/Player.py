@@ -32,7 +32,7 @@ class Player(pygame.sprite.Sprite):
             self.image = self.images[0][0]
             self.rect = self.image.get_rect()
 
-    def update(self, up, down, left, right):
+    def update(self, up, down, left, right, walls):
         '''
         update the player's pos
         '''
@@ -40,6 +40,9 @@ class Player(pygame.sprite.Sprite):
         if up:  # up
             if self.rect.centery >= self.rect.height / 2:
                 self.y -= PLAYER_SPEED
+                self.rect.center = (self.x, self.y)
+                if len(pygame.sprite.spritecollide(self, walls, False)):
+                    self.y += PLAYER_SPEED
             self.state = 0
             self.change += 1
             if self.change == Frame_update:
@@ -50,6 +53,9 @@ class Player(pygame.sprite.Sprite):
         if down:  # down
             if self.rect.centery <= WIN_SIZE_Y - self.rect.height / 2:
                 self.y += PLAYER_SPEED
+                self.rect.center = (self.x, self.y)
+                if len(pygame.sprite.spritecollide(self, walls, False)):
+                    self.y -= PLAYER_SPEED
             self.state = 1
             self.change += 1
             if self.change == Frame_update:
@@ -60,6 +66,10 @@ class Player(pygame.sprite.Sprite):
         if left:  # left
             if self.rect.centerx >= self.rect.width / 2:
                 self.x -= PLAYER_SPEED
+                self.rect.center = (self.x, self.y)
+                collided_walls = pygame.sprite.spritecollide(self, walls, False)
+                if len(collided_walls):
+                    self.x += PLAYER_SPEED
             self.state = 2
             self.change += 1
             if self.change == Frame_update:
@@ -70,15 +80,23 @@ class Player(pygame.sprite.Sprite):
         if right:  # right
             if self.rect.centerx <= WIN_SIZE_X - self.rect.width / 2:
                 self.x += PLAYER_SPEED
+                self.rect.center = (self.x, self.y)
+                if len(pygame.sprite.spritecollide(self, walls, False)):
+                    self.x -= PLAYER_SPEED
             self.state = 3
             self.change += 1
             if self.change == Frame_update:
                 self.frame = (self.frame + 1) % 4
                 self.change = 0
             self.image = self.images[self.state][self.frame]
+        self.rect.center = (self.x, self.y)
 
-        self.rect.bottomleft = (self.x, self.y)
 
     def draw(self, surface):
         surface.blit(self.image, self.rect)
+
+        # for debugging: display the boundary of the player
+        img = pygame.Surface(self.rect.size)
+        img.fill((128,128,128))
+        surface.blit(img, self.rect)
 
