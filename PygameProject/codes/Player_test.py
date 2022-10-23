@@ -10,7 +10,7 @@ def main():
     running = True
     IM = InputManager()
     surface = pygame.display.set_mode((WIN_SIZE_X, WIN_SIZE_Y))
-    player = Player(-50, 100)
+    player = Player(25, 30)
     wall1 = Wall((200, 200))
     wall2 = Wall((300, 300))
     wall_group = pygame.sprite.Group()
@@ -53,8 +53,15 @@ def main():
             right = True
         else:
             right = False
+
+        if pygame.K_SPACE in IM.keyDownList:
+            space = True
+            # print("space")
+        else:
+            space = False
+
         surface.fill((0, 0, 0))
-        player.update(up, down, left, right, wall_group)
+        player.update(space, up, down, left, right, wall_group)
         player.draw(surface)
         wall_group.draw(surface)
         pygame.display.flip()
