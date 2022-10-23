@@ -2,7 +2,7 @@ import pygame
 from Player import *
 from settings import *
 from InputManager import *
-
+from Wall import Wall
 
 def main():
     pygame.init()
@@ -11,6 +11,11 @@ def main():
     IM = InputManager()
     surface = pygame.display.set_mode((WIN_SIZE_X, WIN_SIZE_Y))
     player = Player(-50, 100)
+    wall1 = Wall((200, 200))
+    wall2 = Wall((300, 300))
+    wall_group = pygame.sprite.Group()
+    wall_group.add(wall1)
+    wall_group.add(wall2)
     while running:
         clock.tick(60)
         IM.update()
@@ -49,8 +54,9 @@ def main():
         else:
             right = False
         surface.fill((0, 0, 0))
-        player.update(up, down, left, right)
+        player.update(up, down, left, right, wall_group)
         player.draw(surface)
+        wall_group.draw(surface)
         pygame.display.flip()
 
 
