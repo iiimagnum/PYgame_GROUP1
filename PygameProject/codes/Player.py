@@ -32,10 +32,39 @@ class Player(pygame.sprite.Sprite):
             self.image = self.images[0][0]
             self.rect = self.image.get_rect()
 
-    def update(self, up, down, left, right, walls):
+    def update(self, space, up, down, left, right, walls):
         '''
         update the player's pos
         '''
+        if space:
+            if self.state == 0:
+                if self.rect.centery >= self.rect.height / 2 + PLAYER_DASH_SPEED:
+                    self.y -= PLAYER_DASH_SPEED
+                    self.rect.center = (self.x, self.y)
+                else:
+                    self.y = self.rect.height / 2
+                    self.rect.center = (self.x, self.y)
+            if self.state == 1:
+                if self.rect.centery + PLAYER_DASH_SPEED <= WIN_SIZE_Y - self.rect.height / 2:
+                    self.y += PLAYER_DASH_SPEED
+                    self.rect.center = (self.x, self.y)
+                else:
+                    self.y = WIN_SIZE_Y - self.rect.height / 2
+                    self.rect.center = (self.x, self.y)
+            if self.state == 2:
+                if self.rect.centerx >= self.rect.width / 2 + PLAYER_DASH_SPEED:
+                    self.x -= PLAYER_DASH_SPEED
+                    self.rect.center = (self.x, self.y)
+                else:
+                    self.x = self.rect.width / 2
+                    self.rect.center = (self.x, self.y)
+            if self.state == 3:
+                if self.rect.centerx + PLAYER_DASH_SPEED <= WIN_SIZE_X - self.rect.width / 2:
+                    self.x += PLAYER_DASH_SPEED
+                    self.rect.center = (self.x, self.y)
+                else:
+                    self.x = WIN_SIZE_X - self.rect.width / 2
+                    self.rect.center = (self.x, self.y)
 
         if up:  # up
             if self.rect.centery >= self.rect.height / 2:
@@ -96,7 +125,8 @@ class Player(pygame.sprite.Sprite):
         surface.blit(self.image, self.rect)
 
         # for debugging: display the boundary of the player
+        '''
         img = pygame.Surface(self.rect.size)
         img.fill((128,128,128))
         surface.blit(img, self.rect)
-
+        '''
