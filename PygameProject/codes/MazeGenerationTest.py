@@ -218,7 +218,7 @@ def RemoveWallDistanceVersion(maze,RemoveNum):
     maze[x,y]=0
     stack.append((x,y))
     while len(stack):
-        (x,y)=stack.pop()
+        (x,y)=stack.pop(0)
         if y-1>0:#上
             if maze[x,y-1]==1 :
                 maze[x,y-1]=min(maze[x,y-1],maze[x,y]+1)

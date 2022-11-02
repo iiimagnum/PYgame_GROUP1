@@ -31,18 +31,18 @@ class MazeCell:
 class Maze:
 
     def __init__(self):
-        self.CurrentMazeInfo=numpy.zeros((MAZE_COLS*2+1,MAZE_ROWS*2+1),dtype=MazeCell)
+        self.CurrentMazeInfo=numpy.zeros((MAZE_Y * 2 + 1, MAZE_X * 2 + 1), dtype=MazeCell)
         self.wallList=[]
 
     def SummonMaze(self):
 
         #Initialize the maze and its cells
-        maze=numpy.zeros((MAZE_COLS*2+1,MAZE_ROWS*2+1),dtype=int)
+        maze=numpy.zeros((MAZE_Y * 2 + 1, MAZE_X * 2 + 1), dtype=int)
 
         #DFS to generate the maze
         stack=[]
-        x=random.randint(0,MAZE_COLS-1)*2+1
-        y=random.randint(0,MAZE_ROWS-1)*2+1
+        x= random.randint(0, MAZE_X - 1) * 2 + 1
+        y= random.randint(0, MAZE_Y - 1) * 2 + 1
         maze[y,x]=1
         stack.append((y,x))
         while len(stack)>0:
@@ -51,13 +51,13 @@ class Maze:
             if x-2>0:
                 if maze[y,x-2]==0:
                     neighbourList.append((y,x-2))
-            if x+2<MAZE_ROWS*2:
+            if x+2<MAZE_X*2:
                 if maze[y,x+2]==0:
                     neighbourList.append((y,x+2))
             if y-2>0:
                 if maze[y-2,x]==0:
                     neighbourList.append((y-2,x))
-            if y+2<MAZE_COLS*2:
+            if y+2<MAZE_Y*2:
                 if maze[y+2,x]==0:
                     neighbourList.append((y+2,x))
 
@@ -70,12 +70,12 @@ class Maze:
             pass
 
         #Delete some walls
-        maze=self.__RemoveWall__(maze,int(MAZE_COLS*MAZE_ROWS/10))
+        maze=self.__RemoveWall__(maze, int(MAZE_Y * MAZE_X / 5))
 
 
         # Decide the img of the cell
-        for i in range(MAZE_ROWS*2+1):
-            for j in range(MAZE_COLS*2+1):
+        for i in range(MAZE_Y * 2 + 1):
+            for j in range(MAZE_X * 2 + 1):
                 if maze[i,j]==1:
                     self.CurrentMazeInfo[i,j]=MazeCell((i,j),1,random.randint(1,32))
                 else:
@@ -88,10 +88,10 @@ class Maze:
                             self.CurrentMazeInfo[i,j]=MazeCell((i,j),0,obstacleValue)
                             continue
 
-                        if j == MAZE_COLS * 2:#cell is (MAZE_COLS*2,0)
-                            obstacleValue=8*abs(1-maze[j-1,i])+64*abs(1-maze[j,i+1])
-                            if maze[j-1,i]==0 and maze[j,i+1]==0:
-                                obstacleValue+=32*abs(1-maze[j-1,i+1])
+                        if j == MAZE_X * 2:#cell is (MAZE_COLS*2,0)
+                            obstacleValue=8*abs(1-maze[i,j-1])+64*abs(1-maze[i+1,j])
+                            if maze[i,j-1]==0 and maze[i+1,j]==0:
+                                obstacleValue+=32*abs(1-maze[i+1,j-1])
                             self.CurrentMazeInfo[i,j]=MazeCell((i,j),0,obstacleValue)
                             continue
                         #cell is in the first row
@@ -111,14 +111,14 @@ class Maze:
                         self.CurrentMazeInfo[i, j] = MazeCell((i, j), 0, obstacleValue)
                         continue
 
-                    if i == MAZE_ROWS * 2:
+                    if i == MAZE_Y * 2:
                         if j == 0:#cell at (0,MAZE_ROWS*2)
                             obstacleValue+=2*abs(1-maze[i-1,j])+16*abs(1-maze[i,j+1])
                             if maze[i-1,j]==0 and maze[i,j+1]==0:
                                 obstacleValue += 4*abs(1-maze[i-1,j+1])
                             self.CurrentMazeInfo[i,j]=MazeCell((i,j),0,obstacleValue)
                             continue
-                        if j == MAZE_ROWS * 2:#cell at right bottom
+                        if j == MAZE_X * 2:#cell at right bottom
                             obstacleValue+=2*abs(1-maze[i-1,j])+8*abs(1-maze[i,j-1])
                             if maze[i-1,j]==0 and maze[i,j-1]==0:
                                 obstacleValue += 1*abs(1-maze[i-1,j-1])
@@ -149,7 +149,7 @@ class Maze:
                         self.CurrentMazeInfo[i,j]=MazeCell((i,j),0,obstacleValue)
                         continue
 
-                    if j==MAZE_COLS*2:
+                    if j==MAZE_X*2:
                         obstacleValue = 2 * abs(1-maze[ i - 1,j] )+ 8 * abs(1-maze[i,j - 1]) + 64 * abs(1-maze[ i + 1,j])
                         if maze[ i - 1,j] == 0 and maze[i,j - 1] == 0:
                             obstacleValue += 1* abs(1-maze[i - 1, j - 1])
@@ -174,22 +174,22 @@ class Maze:
         pass
 
     def draw(self,surface):
-        drawSurface=pygame.Surface(((MAZE_COLS*2+1)*MazeCell.CellSize,(MAZE_ROWS*2+1)*MazeCell.CellSize))
-        for y in range(MAZE_ROWS*2+1):
-            for x in range(MAZE_COLS*2+1):
+        drawSurface=pygame.Surface(((MAZE_X * 2 + 1) * MazeCell.CellSize, (MAZE_Y * 2 + 1) * MazeCell.CellSize))
+        for y in range(MAZE_Y * 2 + 1):
+            for x in range(MAZE_X * 2 + 1):
                 testRect=self.CurrentMazeInfo[y,x].img.get_rect()
                 drawSurface.blit(self.CurrentMazeInfo[y,x].img,self.CurrentMazeInfo[y,x].rect)
         surface.blit(drawSurface,drawSurface.get_rect())
 
     def __RemoveWall__(self,maze,RemoveNum):
-        distanceMaze = numpy.zeros((MAZE_COLS * 2 + 1, MAZE_ROWS * 2 + 1), dtype=int)
+        distanceMaze = numpy.zeros((MAZE_Y * 2 + 1, MAZE_X * 2 + 1), dtype=int)
         distanceMaze.fill(999999)
         visitedList = []
         wallList = []
         # using BFS to set the distance
         stack = []
-        x = random.randint(1, MAZE_COLS - 1) * 2
-        y = random.randint(1, MAZE_ROWS - 1) * 2
+        x = random.randint(1, MAZE_X - 1) * 2
+        y = random.randint(1, MAZE_Y - 1) * 2
         visitedList.append((y,x))
         maze[y,x] = 0
         stack.append((y,x))
@@ -204,7 +204,7 @@ class Maze:
                 else:
                     if not wallList.__contains__(( y - 1,x)):
                         wallList.append(( y - 1,x))
-            if y - 1 < MAZE_ROWS * 2 + 1:
+            if y - 1 < MAZE_X * 2 + 1:
                 if maze[ y + 1,x] == 1:
                     maze[ y + 1,x] = min(maze[ y + 1,x], maze[ y,x] + 1)
                     if not visitedList.__contains__(( y + 1,x)):
@@ -222,7 +222,7 @@ class Maze:
                     else:
                         if not wallList.__contains__((y,x - 1)):
                             wallList.append((y,x - 1))
-            if x + 1 < MAZE_COLS * 2 + 1:
+            if x + 1 < MAZE_Y * 2 + 1:
                 if maze[y,x + 1] == 1:
                     maze[y,x + 1] = min(maze[y,x + 1], maze[y,x] + 1)
                     if not visitedList.__contains__((y,x + 1)):
@@ -256,8 +256,8 @@ class Maze:
                 # print(f"Remove {(wallX,wallY)}")
                 for i in range(4):
                     for j in range(4):
-                        if (wallX + i - 2 > 0 and wallX + i - 2 < MAZE_COLS * 2) and (
-                                wallY + j - 2 > 0 and wallY + j - 2 < MAZE_ROWS * 2) and wallList.__contains__(( wallY + j - 2,wallX + i - 2)):
+                        if (wallX + i - 2 > 0 and wallX + i - 2 < MAZE_Y * 2) and (
+                                wallY + j - 2 > 0 and wallY + j - 2 < MAZE_X * 2) and wallList.__contains__((wallY + j - 2, wallX + i - 2)):
                             wallList.remove((wallY + j - 2,wallX + i - 2))
 
                 RemoveNum -= 1
@@ -268,7 +268,7 @@ class Maze:
 
 if __name__ == '__main__':
     pygame.init()
-    MainSurface=pygame.display.set_mode(((MAZE_COLS*2+1)*MazeCell.CellSize,(MAZE_ROWS*2+1)*MazeCell.CellSize))
+    MainSurface=pygame.display.set_mode(((MAZE_X * 2 + 1) * MazeCell.CellSize, (MAZE_Y * 2 + 1) * MazeCell.CellSize))
     maze=Maze()
     maze.SummonMaze()
     while True:
