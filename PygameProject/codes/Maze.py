@@ -1,5 +1,5 @@
 import random
-
+from InputManager import *
 import  pygame
 import  numpy
 from settings import *
@@ -21,7 +21,6 @@ class MazeCell:
             self.img=pygame.image.load(MazeCell.BlockPath + str(imgID) + ".png").convert().convert_alpha()
         elif self.cellType==1:
             self.img=pygame.image.load(MazeCell.PathPath+str(imgID)+".png").convert().convert_alpha()
-
         self.img=pygame.transform.scale(self.img,(MazeCell.CellSize,MazeCell.CellSize))
         self.rect=self.img.get_rect()
         self.rect.topleft=(self.x*MazeCell.CellSize,self.y*MazeCell.CellSize)
@@ -266,3 +265,20 @@ class Maze:
         # print(f"Now removed {RemoveNum}")
         return maze
         pass
+
+if __name__ == '__main__':
+    pygame.init()
+    MainSurface=pygame.display.set_mode(((MAZE_COLS*2+1)*MazeCell.CellSize,(MAZE_ROWS*2+1)*MazeCell.CellSize))
+    maze=Maze()
+    maze.SummonMaze()
+    while True:
+        InputManager.update()
+        if InputManager.keyDownList.__contains__(pygame.K_ESCAPE) or InputManager.keyDownList.__contains__(pygame.K_q):
+            break
+            pass
+        if InputManager.keyDownList.__contains__(pygame.K_1):
+            maze.SummonMaze()
+        maze.draw(MainSurface)
+        pygame.display.flip()
+
+    pass
