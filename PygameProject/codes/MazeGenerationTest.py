@@ -287,16 +287,16 @@ def RemoveWallDistanceVersion(maze,RemoveNum):
             maze[wallX,wallY]=1
 
     print(f"Now removed {RemoveNum}")
-    return  maze
+    return maze
     pass
 
 def main():
     pygame.init()
-    MainSurface=pygame.display.set_mode([(MazeSize_Width*2+1)*BlockSize,(MazeSize_Height*2+1)*BlockSize])
-    MazeInfo=numpy.zeros((MazeSize_Width,MazeSize_Height),dtype=int)
+    MainSurface = pygame.display.set_mode([(MazeSize_Width * 2 + 1)*BlockSize,(MazeSize_Height * 2 + 1) * BlockSize])
+    MazeInfo = numpy.zeros((MazeSize_Width, MazeSize_Height), dtype=int)
     #MazeInfo[1,2]=1
     MazeInfo = DFS()
-    MazeInfo= RemoveWallDistanceVersion(MazeInfo,30)
+    MazeInfo = RemoveWallDistanceVersion(MazeInfo, 30)
     while True:
         Inp.InputManager.update()
         if Inp.InputManager.keyDownList.__contains__(pygame.K_ESCAPE) or Inp.InputManager.keyDownList.__contains__(pygame.K_q):
@@ -304,7 +304,7 @@ def main():
             pass
         if Inp.InputManager.keyDownList.__contains__(pygame.K_1):
             MazeInfo = Aldous_Broder()
-            MazeInfo= RemoveWallDistanceVersion(MazeInfo,30)
+            MazeInfo = RemoveWallDistanceVersion(MazeInfo, 30)
         if Inp.InputManager.keyDownList.__contains__(pygame.K_2):
             MazeInfo = Prim()
             MazeInfo = RemoveWallDistanceVersion(MazeInfo, 30)
@@ -312,8 +312,8 @@ def main():
             MazeInfo = DFS()
             MazeInfo = RemoveWallDistanceVersion(MazeInfo, 30)
 
-        drawSurface=DrawMaze(MazeInfo)
-        MainSurface.blit( drawSurface,drawSurface.get_rect())
+        drawSurface = DrawMaze(MazeInfo)
+        MainSurface.blit(drawSurface, drawSurface.get_rect())
 
         pygame.display.flip()
         pass
