@@ -26,7 +26,7 @@ class Player(pygame.sprite.Sprite):
                     path = "../images/player/right/" + str(j) + ".png"
                 img = pygame.image.load(path).convert()
                 img.convert_alpha()
-                img.set_colorkey((255, 255, 255))
+                img.set_colorkey((0, 0, 0))
                 collect.append(img)
             self.images.append(collect)
             self.image = self.images[0][0]

@@ -1,8 +1,11 @@
 import pygame
 from Player import *
+from Monster import *
+from Props import *
 from settings import *
 from InputManager import *
 from Wall import Wall
+
 
 def main():
     pygame.init()
@@ -11,6 +14,9 @@ def main():
     IM = InputManager()
     surface = pygame.display.set_mode((WIN_SIZE_X, WIN_SIZE_Y))
     player = Player(25, 30)
+    monster = Monster(500, 500)
+    Soils = pygame.sprite.Group()
+    Soils.add(Soil(700, 700))
     wall1 = Wall((200, 200))
     wall2 = Wall((300, 300))
     wall_group = pygame.sprite.Group()
@@ -60,9 +66,16 @@ def main():
         else:
             space = False
 
+        if pygame.K_b in IM.keyDownList:
+            Soils.add(Soil(player.rect.centerx, player.rect.centery))
+
         surface.fill((0, 0, 0))
+        Soils.update(monster, player)
         player.update(space, up, down, left, right, wall_group)
+        monster.update(player)
+        Soils.draw(surface)
         player.draw(surface)
+        monster.draw(surface)
         wall_group.draw(surface)
         pygame.display.flip()
 
