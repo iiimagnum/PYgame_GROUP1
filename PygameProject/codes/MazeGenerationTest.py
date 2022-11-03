@@ -114,8 +114,10 @@ def Prim():
 def DFS():
     maze = numpy.zeros((MazeSize_Width * 2 + 1, MazeSize_Height * 2 + 1), dtype=int)
     stack=[]
-    x=random.randint(0,MazeSize_Width-1)*2+1
-    y=random.randint(0,MazeSize_Height-1)*2+1
+    #x=random.randint(0,MazeSize_Width-1)*2+1
+   #y=random.randint(0,MazeSize_Height-1)*2+1
+    x=1
+    y=1
     maze[x,y]=1
     stack.append((x,y))
     while len(stack)>0:
@@ -184,6 +186,8 @@ def RemoveWall(Maze,RemoveNum):
             if Maze[x-1,y]+Maze[x+1,y]==2 or Maze[x,y-1]+Maze[x,y+1]==2:
                 Maze[x,y]=1
                 RemoveNum-=1
+
+    print(f"{RemoveNum} more to Remove")
     return  Maze
     pass
 
@@ -201,7 +205,7 @@ def RemoveWallAreaVersion(Maze,RemoveNum):
                     Maze[x, y] = 1
                     RemoveNum -= 1
             break
-
+    print(f"{RemoveNum} more to Remove")
     return  Maze
     pass
 
@@ -277,7 +281,6 @@ def RemoveWallDistanceVersion(maze,RemoveNum):
                     wallY=y
         if maxDistance>-1:
             wallList.remove((wallX,wallY))
-            print(f"Remove {(wallX,wallY)}")
             for i in range(4):
                 for j in range(4):
                     if (wallX+i-2>0 and wallX+i-2<MazeSize_Width*2) and (wallY+j-2>0 and wallY+j-2<MazeSize_Height*2) and wallList.__contains__((wallX+i-2,wallY+j-2)):
@@ -286,9 +289,46 @@ def RemoveWallDistanceVersion(maze,RemoveNum):
             RemoveNum-=1
             maze[wallX,wallY]=1
 
-    print(f"Now removed {RemoveNum}")
+
+    print(f"{RemoveNum} more to Remove")
     return maze
     pass
+
+def RemoveWallPJVersion(maze,remDis):
+    for x in range(1,MazeSize_Width-1):
+        curLasting=0
+        for y in range(2,MazeSize_Height*2-2):
+            if maze[x*2,y]==0:
+                curLasting=curLasting+1
+                if random.randrange(0,10)<=8:
+                    if curLasting>=remDis+random.randint(-2,2) and maze[x*2,y-1]+maze[x*2,y+1]==0:
+                        maze[x*2,y]=1
+
+                        #if maze[x*2,y-1]+maze[x*2,y+1]==2:
+                           # maze[x*2,y-1] = 1
+                            #maze[x*2,y+1] = 1
+                        curLasting=0
+            else:
+                curLasting=0
+
+    for y in range(1,MazeSize_Height-1):
+        curLasting=0
+        for x in range(2,MazeSize_Width*2-2):
+            if maze[x,y*2]==0:
+                curLasting=curLasting+1
+                if random.randrange(0,10)<=8:
+                    if curLasting>=remDis+random.randint(-2,2) and maze[x+1,y*2]+maze[x-1,y*2]==0:
+                        maze[x,y*2]=1
+                        #if maze[x+1,y*2]+maze[x-1,y*2]==2:
+                            #maze[x+1,y*2] = 1
+                            #maze[x-1,y*2] = 1
+                        curLasting=0
+            else:
+                curLasting=0
+    return  maze
+
+
+
 
 def main():
     pygame.init()
@@ -304,13 +344,13 @@ def main():
             pass
         if Inp.InputManager.keyDownList.__contains__(pygame.K_1):
             MazeInfo = Aldous_Broder()
-            MazeInfo = RemoveWallDistanceVersion(MazeInfo, 30)
+            MazeInfo = RemoveWall(MazeInfo, 30)
         if Inp.InputManager.keyDownList.__contains__(pygame.K_2):
             MazeInfo = Prim()
-            MazeInfo = RemoveWallDistanceVersion(MazeInfo, 30)
+            MazeInfo = RemoveWall(MazeInfo, 30)
         if Inp.InputManager.keyDownList.__contains__(pygame.K_3):
             MazeInfo = DFS()
-            MazeInfo = RemoveWallDistanceVersion(MazeInfo, 30)
+            MazeInfo = RemoveWallPJVersion(MazeInfo, 4)
 
         drawSurface = DrawMaze(MazeInfo)
         MainSurface.blit(drawSurface, drawSurface.get_rect())

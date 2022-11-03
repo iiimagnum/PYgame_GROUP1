@@ -3,27 +3,28 @@ from InputManager import *
 import  pygame
 import  numpy
 from settings import *
+from InteractivePoint import  *
 #using DFS to Summon the Maze
 
 class MazeCell:
-    CellSize=20
+
     BlockPath="../images/maze/Block/Block_"
     PathPath="../images/maze/Path/Path_"
 
     def __init__(self, position, type, imgID=0):
         """
-        :param position:position 中的x，y仅表示位于第几格,而非rect的坐标
+        :param position=(y,x):position 中的x，y仅表示位于第几格,而非rect的坐标
         """
         self.x=position[1]
         self.y=position[0]
-        self.cellType=type# 0 is wall , 1 is passage ,
+        self.cellType=type# 0 is wall , 1 is passage ,2 is interactPoint
         if self.cellType==0:
             self.img=pygame.image.load(MazeCell.BlockPath + str(imgID) + ".png").convert().convert_alpha()
         elif self.cellType==1:
             self.img=pygame.image.load(MazeCell.PathPath+str(imgID)+".png").convert().convert_alpha()
-        self.img=pygame.transform.scale(self.img,(MazeCell.CellSize,MazeCell.CellSize))
+        self.img=pygame.transform.scale(self.img,(CellSize,CellSize))
         self.rect=self.img.get_rect()
-        self.rect.topleft=(self.x*MazeCell.CellSize,self.y*MazeCell.CellSize)
+        self.rect.topleft=(self.x*CellSize,self.y*CellSize)
     def draw(self,surface):
         surface.blit(self.img,self.rect)
     pass
@@ -32,13 +33,14 @@ class Maze:
 
     def __init__(self):
         self.CurrentMazeInfo=numpy.zeros((MAZE_Y * 2 + 1, MAZE_X * 2 + 1), dtype=MazeCell)
+        self.InteractPointList=[]
         self.wallList=[]
 
     def SummonMaze(self):
 
         #Initialize the maze and its cells
         maze=numpy.zeros((MAZE_Y * 2 + 1, MAZE_X * 2 + 1), dtype=int)
-
+        self.InteractPointList.clear()
         #DFS to generate the maze
         stack=[]
         x= random.randint(0, MAZE_X - 1) * 2 + 1
@@ -70,7 +72,7 @@ class Maze:
             pass
 
         #Delete some walls
-        maze=self.__RemoveWall__(maze, int(MAZE_Y * MAZE_X / 5))
+        maze=self.__RemoveWallPJVersion(maze,3,3)
 
 
         # Decide the img of the cell
@@ -171,14 +173,19 @@ class Maze:
                             powTime+=1
                             self.CurrentMazeInfo[i,j]=MazeCell((i,j),0,obstacleValue)
 
+        #Add the interact point
+        self.SummonInteractPoint(3)
+
         pass
 
     def draw(self,surface):
-        drawSurface=pygame.Surface(((MAZE_X * 2 + 1) * MazeCell.CellSize, (MAZE_Y * 2 + 1) * MazeCell.CellSize))
+        drawSurface=pygame.Surface(((MAZE_X * 2 + 1) * CellSize, (MAZE_Y * 2 + 1) * CellSize))
         for y in range(MAZE_Y * 2 + 1):
             for x in range(MAZE_X * 2 + 1):
-                testRect=self.CurrentMazeInfo[y,x].img.get_rect()
                 drawSurface.blit(self.CurrentMazeInfo[y,x].img,self.CurrentMazeInfo[y,x].rect)
+
+        for ip in self.InteractPointList:
+            drawSurface.blit(ip.img,ip.rect)
         surface.blit(drawSurface,drawSurface.get_rect())
 
     def __RemoveWall__(self,maze,RemoveNum):
@@ -194,7 +201,7 @@ class Maze:
         maze[y,x] = 0
         stack.append((y,x))
         while len(stack):
-            (y,x) = stack.pop()
+            (y,x) = stack.pop(0)
             if y - 1 > 0:  # 上
                 if maze[ y - 1,x] == 1:
                     maze[y - 1,x] = min(maze[y - 1,x], maze[ y,x] + 1)
@@ -265,10 +272,65 @@ class Maze:
         # print(f"Now removed {RemoveNum}")
         return maze
         pass
+    def __RemoveWallPJVersion(self,maze,remDis,randRange):
+        for x in range(1,MAZE_X-1):
+            curLasting=0
+            rdDis=remDis+random.randint(int(-randRange/2),randRange)
+            for y in range(2,MAZE_Y*2-1):
+                if maze[y,x*2]==0:
+                    curLasting=curLasting+1
+                    if curLasting>=rdDis and maze[y,x*2+1]+maze[y,x*2-1]==2:
+                        maze[y,x*2]=1
+                        curLasting=0
+                else:
+                    curLasting=0
+
+        for y in range(1, MAZE_Y - 1):
+            curLasting = 0
+            rdDis = remDis + random.randint(int(-randRange/2), randRange)
+            for x in range(2, MAZE_X * 2 - 1):
+                if maze[y*2, x ] == 0:
+                    curLasting = curLasting + 1
+                    if curLasting >= rdDis and maze[y* 2 + 1, x ] + maze[y* 2 - 1, x ] == 2:
+                        maze[y*2, x ] = 1
+                        curLasting = 0
+                else:
+                    curLasting = 0
+
+        for i in range(2,MAZE_Y*2):
+            for j in range(2,MAZE_X*2):
+                if maze[i,j]==0:
+                    if maze[i-1,j]+maze[i+1,j]+maze[i,j-1]+maze[i,j+1]==4:
+                        d=[(-1,0),(1,0),(0,1),(0,-1)]
+                        (dx,dy)=random.choice(d)
+                        maze[i+dy,j+dx]=0
+
+        return maze
+
+    def SummonInteractPoint(self,treasureNum):
+        while treasureNum>0:
+            treasureNum-=1
+            while True:
+                x=random.randint(1,MAZE_X*2)
+                y=random.randint(1,MAZE_Y*2)
+                if self.CurrentMazeInfo[y,x].cellType==1:
+                    self.CurrentMazeInfo[y,x].cellType=2
+                    ip=Treasure((y,x))
+                    self.InteractPointList.append(ip)
+                    break
+
+        while True:
+            x = random.randint(1, MAZE_X * 2)
+            y = random.randint(1, MAZE_Y * 2)
+            if self.CurrentMazeInfo[y, x].cellType == 1:
+                self.CurrentMazeInfo[y, x].cellType = 2
+                ex=ExitPoint((y,x))
+                self.InteractPointList.append(ex)
+                break
 
 if __name__ == '__main__':
     pygame.init()
-    MainSurface=pygame.display.set_mode(((MAZE_X * 2 + 1) * MazeCell.CellSize, (MAZE_Y * 2 + 1) * MazeCell.CellSize))
+    MainSurface=pygame.display.set_mode(((MAZE_X * 2 + 1) * CellSize, (MAZE_Y * 2 + 1) * CellSize))
     maze=Maze()
     maze.SummonMaze()
     while True:
