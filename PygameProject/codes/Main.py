@@ -3,7 +3,6 @@ from settings import *
 from Player import *
 from Monster import *
 from Props import *
-from settings import *
 from Maze import *
 from Wall import *
 
