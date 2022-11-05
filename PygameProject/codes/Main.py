@@ -5,6 +5,7 @@ from Monster import *
 from Props import *
 from settings import *
 from Maze import *
+from Wall import *
 
 
 def main():
@@ -17,6 +18,13 @@ def main():
     maze = Maze()
     maze.SummonMaze()
     wall_group = pygame.sprite.Group()
+    for i in range(MAZE_Y * 2 + 1):
+        for j in range(MAZE_X * 2 + 1):
+            if maze.CurrentMazeInfo[i, j].cellType == 0:
+                # print(str(i) + " " + str(j))
+                x = j * 40 + 20
+                y = i * 40 + 20
+                wall_group.add(Wall((x, y)))
 
     '''Player'''
     player = Player(60, 60)
