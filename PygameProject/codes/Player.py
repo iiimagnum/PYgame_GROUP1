@@ -26,11 +26,12 @@ class Player(pygame.sprite.Sprite):
                     path = "../images/player/right/" + str(j) + ".png"
                 img = pygame.image.load(path).convert()
                 img.convert_alpha()
-                img.set_colorkey((0, 0, 0))
+                img.set_colorkey((255, 255, 255))
                 collect.append(img)
             self.images.append(collect)
             self.image = self.images[0][0]
             self.rect = self.image.get_rect()
+        self.rect.center = (self.x, self.y)
 
     def update(self, space, up, down, left, right, walls):
         '''
