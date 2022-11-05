@@ -20,7 +20,7 @@ class Map:
     """ A class that break the map into several blocks for monster navigation.
     """
     def __init__(self):
-        self.block_map = [ [Block() for j in range(MAZE_ROWS)] for i in range(MAZE_COLS)]
+        self.block_map = [ [Block() for j in range(MAZE_Y)] for i in range(MAZE_X)]
         self.player_block_index = None
         self.monster_block_index = None
     
@@ -55,9 +55,9 @@ class Map:
             neighbors_list.append((col - 1, row))
         if row > 0:
             neighbors_list.append((col, row - 1))
-        if col < MAZE_COLS - 1:
+        if col < MAZE_X - 1:
             neighbors_list.append((col + 1, row))
-        if row < MAZE_ROWS - 1:
+        if row < MAZE_Y - 1:
             neighbors_list.append((col, row + 1))
         return neighbors_list
 
