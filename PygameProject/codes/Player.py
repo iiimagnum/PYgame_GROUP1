@@ -12,6 +12,8 @@ class Player(pygame.sprite.Sprite):
         self.frame = 0  # frame counter
         self.state = 0
         self.change = 0
+        self.power = 100
+        self.health = 100
         self.images = []
         for i in range(0, 4):
             collect = []
@@ -37,8 +39,21 @@ class Player(pygame.sprite.Sprite):
         '''
         update the player's pos
         '''
-        if space:
-            if self.state == 0:
+        if space and self.power >= 1:
+            # print("run")
+            PLAYER_SPEED = 4
+            self.power -= 1
+            # print(self.power)
+        elif space and self.power == 0:
+            PLAYER_SPEED = 2
+        else:
+            PLAYER_SPEED = 2
+            if self.power < 100:
+                self.power += 0.1
+            # print(self.power)
+
+        '''
+        if self.state == 0:
                 if self.rect.centery >= self.rect.height / 2 + PLAYER_DASH_SPEED:
                     self.y -= PLAYER_DASH_SPEED
                     self.rect.center = (self.x, self.y)
@@ -66,6 +81,8 @@ class Player(pygame.sprite.Sprite):
                 else:
                     self.x = WIN_SIZE_X - self.rect.width / 2
                     self.rect.center = (self.x, self.y)
+        '''
+
 
         if up:  # up
             if self.rect.centery >= self.rect.height / 2:
@@ -124,6 +141,10 @@ class Player(pygame.sprite.Sprite):
 
     def draw(self, surface):
         surface.blit(self.image, self.rect)
+        health_percent = self.health / 100
+        power_percent = self.power / 100
+        pygame.draw.rect(surface, [0, 255, 0], [20, 575, 300 * health_percent, 10], 0)
+        pygame.draw.rect(surface, [255, 0, 0], [350, 575, 300 * power_percent, 10], 0)
 
         # for debugging: display the boundary of the player
         '''

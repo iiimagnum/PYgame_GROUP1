@@ -56,7 +56,7 @@ def main():
         else:
             right = False
 
-        if pygame.K_SPACE in InputManager.keyDownList:
+        if pygame.K_SPACE in InputManager.keyPressList:
             space = True
             # print("space")
         else:
