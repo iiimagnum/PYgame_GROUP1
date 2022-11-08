@@ -26,6 +26,7 @@ def switch_map_after(surface, maze, player):
 
 
 def main():
+    health = 100
     pygame.init()
     next_level = 0
     clock = pygame.time.Clock()
@@ -47,8 +48,8 @@ def main():
                     wall_group.add(Wall((x, y)))
 
         '''Player'''
-        player = Player(60, 60)
-        switch_map_after(MainSurface, maze,player)
+        player = Player(60, 60, health)
+        switch_map_after(MainSurface, maze, player)
         while running:
             clock.tick(60)
             InputManager.update()
@@ -94,7 +95,7 @@ def main():
                     if ip.type == InteractType.Treasure:
                         maze.InteractPointList.remove(ip)
                     elif ip.type == InteractType.Exit:
-                        print("exit")
+                        # print("exit")
                         next_level = 1
                         break
 

@@ -5,7 +5,7 @@ from settings import *
 class Player(pygame.sprite.Sprite):
     move = [False, False, False, False]
 
-    def __init__(self, x, y):
+    def __init__(self, x, y, health=100):
         pygame.sprite.Sprite.__init__(self)
         self.x = x
         self.y = y
@@ -13,7 +13,7 @@ class Player(pygame.sprite.Sprite):
         self.state = 0
         self.change = 0
         self.power = 100
-        self.health = 100
+        self.health = health
         self.images = []
         for i in range(0, 4):
             collect = []
