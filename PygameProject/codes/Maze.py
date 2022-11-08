@@ -72,7 +72,7 @@ class Maze:
             pass
 
         #Delete some walls
-        maze=self.__RemoveWallPJVersion(maze,3,3)
+        maze=self.__RemoveWallPJVersion__(maze, 3, 3)
 
 
         # Decide the img of the cell
@@ -272,7 +272,7 @@ class Maze:
         # print(f"Now removed {RemoveNum}")
         return maze
         pass
-    def __RemoveWallPJVersion(self,maze,remDis,randRange):
+    def __RemoveWallPJVersion__(self, maze, remDis, randRange):
         for x in range(1,MAZE_X-1):
             curLasting=0
             rdDis=remDis+random.randint(int(-randRange/2),randRange)
