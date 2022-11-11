@@ -2,6 +2,7 @@ import random
 from InputManager import *
 import  pygame
 import  numpy
+from Monster import Monster
 from settings import *
 from InteractivePoint import  *
 #using DFS to Summon the Maze
@@ -327,6 +328,19 @@ class Maze:
                 ex=ExitPoint((y,x))
                 self.InteractPointList.append(ex)
                 break
+    
+    def SummonMonster(self, monsterNum):
+        monster_list = []
+        while monsterNum > 0:
+            monsterNum -= 1
+            while True:
+                x = random.randint(1, MAZE_X * 2)
+                y = random.randint(1, MAZE_Y * 2)
+                if self.CurrentMazeInfo[y, x].cellType == 1:
+                    monster = Monster(x, y)
+                    monster_list.append(monster)
+                    break
+        return monster_list
 
 if __name__ == '__main__':
     pygame.init()

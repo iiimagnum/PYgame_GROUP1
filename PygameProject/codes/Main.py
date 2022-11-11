@@ -7,19 +7,21 @@ from Maze import *
 from Wall import *
 
 
-def switch_map_before(surface, maze, player):
+def switch_map_before(surface, maze, player, monster_list):
     for y in range(0, 300):
         maze.draw(surface)
         player.draw(surface)
+        [m.draw(surface) for m in monster_list]
         pygame.draw.rect(surface, [0, 0, 0], [0, 0, 840, y], 0)
         pygame.draw.rect(surface, [0, 0, 0], [0, 600 - y, 840, y], 0)
         pygame.display.flip()
 
 
-def switch_map_after(surface, maze, player):
+def switch_map_after(surface, maze, player, monster_list):
     for y in range(0, 300):
         maze.draw(surface)
         player.draw(surface)
+        [m.draw(surface) for m in monster_list]
         pygame.draw.rect(surface, [0, 0, 0], [0, 0, 840, 300 - y], 0)
         pygame.draw.rect(surface, [0, 0, 0], [0, 300 + y, 840, 300 - y], 0)
         pygame.display.flip()
@@ -37,6 +39,8 @@ def main():
         next_level = 0
         maze = Maze()
         maze.SummonMaze()
+        monster_list = maze.SummonMonster(1)
+        maze_info = maze.CurrentMazeInfo
         wall_group = pygame.sprite.Group()
         for i in range(MAZE_Y * 2 + 1):
             for j in range(MAZE_X * 2 + 1):
@@ -48,7 +52,7 @@ def main():
 
         '''Player'''
         player = Player(60, 60)
-        switch_map_after(MainSurface, maze,player)
+        switch_map_after(MainSurface, maze, player, monster_list)
         while running:
             clock.tick(60)
             InputManager.update()
@@ -88,6 +92,12 @@ def main():
             '''Player'''
             player.update(space, up, down, left, right, wall_group)
 
+            '''Monsters'''
+            [m.update(player, wall_group, maze_info) for m in monster_list]
+
+            if player.health <= 0:
+                pygame.quit()
+
             for ip in maze.InteractPointList:
                 if player.rect.colliderect(ip):
                     # print("get")
@@ -99,9 +109,10 @@ def main():
                         break
 
             if next_level:
-                switch_map_before(MainSurface, maze, player)
+                switch_map_before(MainSurface, maze, player, monster_list)
                 break
             player.draw(MainSurface)
+            [m.draw(MainSurface) for m in monster_list]
 
             pygame.display.flip()
 
