@@ -31,7 +31,7 @@ class Monster(pygame.sprite.Sprite):
         self.y = block_y * CellSize + CellSize  / 2
         self.image = pygame.image.load('../images/monster/0.png').convert()
         self.image.convert_alpha()
-        self.image.set_colorkey((0, 0, 0))
+        self.image.set_colorkey((255, 255, 255))
         self.rect = self.image.get_rect()
         self.rect.center = (self.x, self.y)
         self.atk_cd = 0

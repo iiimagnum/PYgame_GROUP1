@@ -60,7 +60,7 @@ def main():
         else:
             right = False
 
-        if pygame.K_SPACE in IM.keyDownList:
+        if pygame.K_SPACE in IM.keyPressList:
             space = True
             # print("space")
         else:

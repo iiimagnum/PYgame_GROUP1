@@ -28,12 +28,13 @@ def switch_map_after(surface, maze, player, monster_list):
 
 
 def main():
+    health = 100
     pygame.init()
     next_level = 0
     clock = pygame.time.Clock()
     running = True
     MainSurface = pygame.display.set_mode(((MAZE_X * 2 + 1) * CellSize, (MAZE_Y * 2 + 1) * CellSize))  # main surface
-
+    wallsSurface = pygame.Surface(((MAZE_X*2+1)* CellSize, (MAZE_X*2+1) * CellSize))
     while running:
         '''Maze'''
         next_level = 0
@@ -49,6 +50,11 @@ def main():
                     x = j * 40 + 20
                     y = i * 40 + 20
                     wall_group.add(Wall((x, y)))
+
+        wallsSurface.set_colorkey((1, 2, 3))  # set transparent color
+        wallsSurface.fill((1, 2, 3))
+        wall_group.draw(wallsSurface)
+        wallMask=pygame.mask.from_surface(wallsSurface)
 
         '''Player'''
         player = Player(60, 60)
@@ -90,7 +96,7 @@ def main():
             maze.draw(MainSurface)
 
             '''Player'''
-            player.update(space, up, down, left, right, wall_group)
+            player.update(space, up, down, left, right, wallMask)
 
             '''Monsters'''
             [m.update(player, wall_group, maze_info) for m in monster_list]
@@ -104,7 +110,7 @@ def main():
                     if ip.type == InteractType.Treasure:
                         maze.InteractPointList.remove(ip)
                     elif ip.type == InteractType.Exit:
-                        print("exit")
+                        # print("exit")
                         next_level = 1
                         break
 
@@ -114,6 +120,10 @@ def main():
             player.draw(MainSurface)
             [m.draw(MainSurface) for m in monster_list]
 
+            """Test Draw
+            player.getMask()
+            MainSurface.blit(wallsSurface,wallsSurface.get_rect())
+            """
             pygame.display.flip()
 
 
