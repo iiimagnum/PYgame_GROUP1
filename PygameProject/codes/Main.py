@@ -32,7 +32,7 @@ def main():
     clock = pygame.time.Clock()
     running = True
     MainSurface = pygame.display.set_mode(((MAZE_X * 2 + 1) * CellSize, (MAZE_Y * 2 + 1) * CellSize))  # main surface
-
+    wallsSurface = pygame.Surface(((MAZE_X*2+1)* CellSize, (MAZE_X*2+1) * CellSize))
     while running:
         '''Maze'''
         next_level = 0
@@ -46,6 +46,11 @@ def main():
                     x = j * 40 + 20
                     y = i * 40 + 20
                     wall_group.add(Wall((x, y)))
+
+        wallsSurface.set_colorkey((1, 2, 3))  # set transparent color
+        wallsSurface.fill((1, 2, 3))
+        wall_group.draw(wallsSurface)
+        wallMask=pygame.mask.from_surface(wallsSurface)
 
         '''Player'''
         player = Player(60, 60, health)
@@ -87,7 +92,7 @@ def main():
             maze.draw(MainSurface)
 
             '''Player'''
-            player.update(space, up, down, left, right, wall_group)
+            player.update(space, up, down, left, right, wallMask)
 
             for ip in maze.InteractPointList:
                 if player.rect.colliderect(ip):
@@ -104,6 +109,10 @@ def main():
                 break
             player.draw(MainSurface)
 
+            """Test Draw
+            player.getMask()
+            MainSurface.blit(wallsSurface,wallsSurface.get_rect())
+            """
             pygame.display.flip()
 
 
