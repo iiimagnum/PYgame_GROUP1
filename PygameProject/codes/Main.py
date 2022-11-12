@@ -126,7 +126,8 @@ def main():
 
             """WarFog"""
             warFog.update(player.rect.center)
-            #warFog.draw(MainSurface,player.rect.center)
+
+            warFog.draw(MainSurface,player.rect.center)
             """Test Draw
             player.getMask()
             MainSurface.blit(wallsSurface,wallsSurface.get_rect())

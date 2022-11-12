@@ -30,6 +30,9 @@ class WarFogCell:
 class WarFogMaze:
     ViewDistance=4
     def __init__(self,maze):
+        self.playerLastX=0
+        self.playerLastY=0
+        self.maze=maze
         self.fogMaze=np.zeros((MAZE_Y*2+1,MAZE_X*2+1),dtype=WarFogCell)
         for i in range(MAZE_Y*2+1):
             for j in range(MAZE_X * 2 + 1):
@@ -59,19 +62,61 @@ class WarFogMaze:
                        frontier.append((iy,ix))
 
     def update(self,playerPos):
-        cellX=int(playerPos[0]/CellSize+0.5)
-        cellY=int(playerPos[1]/CellSize+0.5)
+        #print(f"player Original pos is {playerPos}")
+        cellX=int(playerPos[0]/CellSize)
+        cellY=int(playerPos[1]/CellSize)
+        if (cellY,cellX) != (self.playerLastY,self.playerLastX):
+            #print(f"Player move to {(cellY,cellX)}")
+            self.playerLastY=cellY
+            self.playerLastX=cellX
+
+            stack=[]
+            stack.append((cellY,cellX,0))
+            while len(stack)>0:
+                (curY,curX,curDis)=stack.pop(0)
+                if curDis>=WarFogMaze.ViewDistance:
+                    return
+                neighbors=[(curY-1,curX),(curY+1,curX),(curY,curX-1),(curY,curX+1)]
+                for (iy,ix) in neighbors:
+                    if self.maze.CurrentMazeInfo[iy,ix].cellType==0:
+                        self.fogMaze[iy,ix].hasVisited=True
+                        continue
+                    else:
+                        self.fogMaze[iy, ix].hasVisited = True
+                        stack.append((iy,ix,curDis+1))
+
+
+        """
         for dy in range(-1*min(WarFogMaze.ViewDistance, cellY - 1), min(WarFogMaze.ViewDistance, MAZE_Y * 2 - cellY)):
             for dx in range(-1*min(WarFogMaze.ViewDistance, cellX - 1), min(WarFogMaze.ViewDistance, MAZE_X * 2 - cellX)):
                 if abs(self.mazeDis[cellY+dy,cellX+dx]-self.mazeDis[cellY,cellX])<=WarFogMaze.ViewDistance:
                     self.fogMaze[cellY+dy,cellX+dx].hasVisited=True
-
+        """
     def draw(self,surface,playerPos):
-        for y in range(MAZE_Y * 2 + 1):
-            for x in range(MAZE_X * 2 + 1):
-                cellX=int(playerPos[0]/CellSize+0.5)
-                cellY=int(playerPos[1]/CellSize+0.5)
-                if abs( self.mazeDis[cellY,cellX]-self.mazeDis[y,x])<=WarFogMaze.ViewDistance:
+        cellX = int(playerPos[0] / CellSize )
+        cellY = int(playerPos[1] / CellSize )
+        stack = []
+        stack.append((cellY, cellX, 0))
+        passList=[(cellY,cellX)]
+        while len(stack) > 0:
+            (curY, curX, curDis) = stack.pop(0)
+            if curDis >= WarFogMaze.ViewDistance:
+                continue
+            neighbors = [(curY - 1, curX), (curY + 1, curX), (curY, curX - 1), (curY, curX + 1)]
+            for (iy, ix) in neighbors:
+                if self.maze.CurrentMazeInfo[iy, ix].cellType == 0:
+                    passList.append((iy,ix))
+                    self.fogMaze[iy, ix].hasVisited = True
                     continue
+                else:
+                    passList.append((iy, ix))
+                    self.fogMaze[iy, ix].hasVisited = True
+                    stack.append((iy, ix, curDis + 1))
 
-                self.fogMaze[y,x].draw(surface)
+        for y in range(MAZE_Y * 2 ):
+            for x in range(MAZE_X * 2 + 1):
+                if (y,x) in passList:
+                    print(f"Now pass{(y,x)}")
+                    continue
+                else:
+                    self.fogMaze[y,x].draw(surface)
