@@ -3,6 +3,7 @@ import pygame
 import math
 from settings import *
 import heapq
+from SoundPlayer import Sound
 
 def heuristic(ax, ay, bx, by):
 # Manhattan (or taxicab) distance on a square grid
@@ -35,6 +36,7 @@ class Monster(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.center = (self.x, self.y)
         self.atk_cd = 0
+        self.atk_sound = Sound('..\sound\MonsterAttack.wav')
 
     def find_path(self, target, maze_info):
         target_col, target_row = target
@@ -117,6 +119,7 @@ class Monster(pygame.sprite.Sprite):
 
         # Attack!
         if self.atk_cd <= 0 and self.rect.colliderect(player.rect):
+            self.atk_sound.play()
             player.health -= MONSTER_ATK_DMG
             self.atk_cd = MONSTER_ATK_CD
         self.atk_cd -= 1 if self.atk_cd > 0 else 0
