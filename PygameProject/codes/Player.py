@@ -157,8 +157,8 @@ class Player(pygame.sprite.Sprite):
 
     def draw(self, surface):
         surface.blit(self.image, self.rect)
-        health_percent = self.health / 100
-        power_percent = self.power / 100
+        health_percent = self.health / 100 if self.health >= 0 else 0
+        power_percent = self.power / 100 if self.power >= 0 else 0
         pygame.draw.rect(surface, [0, 255, 0], [20, 575, 300 * health_percent, 10], 0)
         pygame.draw.rect(surface, [255, 0, 0], [350, 575, 300 * power_percent, 10], 0)
 
