@@ -5,7 +5,7 @@ from Monster import *
 from Props import *
 from Maze import *
 from Wall import *
-
+from WarFog import *
 
 def switch_map_before(surface, maze, player):
     for y in range(0, 300):
@@ -55,6 +55,7 @@ def main():
         '''Player'''
         player = Player(60, 60, health)
         switch_map_after(MainSurface, maze, player)
+        warFog=WarFogMaze(maze)
         while running:
             clock.tick(60)
             InputManager.update()
@@ -109,6 +110,10 @@ def main():
                 break
             player.draw(MainSurface)
 
+
+            """WarFog"""
+            warFog.update(player.rect.center)
+            #warFog.draw(MainSurface,player.rect.center)
             """Test Draw
             player.getMask()
             MainSurface.blit(wallsSurface,wallsSurface.get_rect())

@@ -221,7 +221,7 @@ class Maze:
                         if not wallList.__contains__(( y + 1,x)):
                             wallList.append(( y + 1,x))
             if x - 1 > 0:
-                if maze[y,x - 1,] == 1:
+                if maze[y,x - 1] == 1:
                     maze[y,x - 1] = min(maze[y,x - 1], maze[y,x] + 1)
                     if not visitedList.__contains__((y,x - 1)):
                         stack.append((y,x - 1))
