@@ -5,6 +5,7 @@ from Monster import *
 from Props import *
 from Maze import *
 from Wall import *
+from SoundPlayer import Sound
 from WarFog import *
 
 
@@ -28,8 +29,18 @@ def switch_map_after(surface, maze, player, monster_list):
         pygame.draw.rect(surface, [0, 0, 0], [0, 300 + y, 840, 300 - y], 0)
         pygame.display.flip()
 
+def bgm_start():
+    """ Play some music!
+    """
+    # pygame.mixer.pre_init(44100, 16, 2, 4096)
+    pygame.mixer.init()
+    pygame.mixer.music.load('..\sound\BGM.mp3')
+    pygame.mixer.music.set_volume(0.2)
+    pygame.mixer.music.play(-1)
+
 
 def main():
+    bgm_start()
     health = 100
     pygame.init()
     next_level = 0
@@ -57,6 +68,11 @@ def main():
         wallsSurface.fill((1, 2, 3))
         wall_group.draw(wallsSurface)
         wallMask=pygame.mask.from_surface(wallsSurface)
+
+        '''Sound'''
+        sound_dash = Sound('..\sound\Dash.wav')
+        sound_treasure = Sound('..\sound\Treasure.wav')
+        sound_pass = Sound('..\sound\Pass.wav')
 
         '''Player'''
         player = Player(60, 60)
@@ -91,9 +107,12 @@ def main():
 
             if pygame.K_SPACE in InputManager.keyPressList:
                 space = True
+                sound_dash.play()
+                sound_dash.playing = True
                 # print("space")
             else:
                 space = False
+                sound_dash.playing = False
 
             '''Maze'''
             maze.draw(MainSurface)
@@ -111,6 +130,7 @@ def main():
                 if player.rect.colliderect(ip):
                     # print("get")
                     if ip.type == InteractType.Treasure:
+                        sound_treasure.play()
                         maze.InteractPointList.remove(ip)
                     elif ip.type == InteractType.Exit:
                         # print("exit")
@@ -118,6 +138,7 @@ def main():
                         break
 
             if next_level:
+                sound_pass.play()
                 switch_map_before(MainSurface, maze, player, monster_list)
                 break
             player.draw(MainSurface)

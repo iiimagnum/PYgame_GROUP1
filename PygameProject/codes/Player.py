@@ -91,8 +91,7 @@ class Player(pygame.sprite.Sprite):
                 offset = wallMask.get_rect().x - self.rect.topleft[0], wallMask.get_rect().y - self.rect.topleft[1]
                 pos = self.getMask().overlap(wallMask, offset)
                 if pos is not None:
-                    #print(f"collide pos is {pos[0], pos[1]}")
-                #if len(pygame.sprite.spritecollide(self, walls, False)):
+                    #print(f"collide pos is {pos[0], pos[1]}")                #if len(pygame.sprite.spritecollide(self, walls, False)):
                     self.y += PLAYER_SPEED
             self.state = 0
             self.change += 1
@@ -108,8 +107,7 @@ class Player(pygame.sprite.Sprite):
                 offset = wallMask.get_rect().x - self.rect.topleft[0], wallMask.get_rect().y - self.rect.topleft[1]
                 pos = self.getMask().overlap(wallMask, offset)
                 if pos is not None:
-                    #print(f"collide pos is {pos[0], pos[1]}")
-                #if len(pygame.sprite.spritecollide(self, walls, False)):
+                    #print(f"collide pos is {pos[0], pos[1]}")                #if len(pygame.sprite.spritecollide(self, walls, Fase)):
                     self.y -= PLAYER_SPEED
             self.state = 1
             self.change += 1
@@ -125,8 +123,7 @@ class Player(pygame.sprite.Sprite):
                 offset = wallMask.get_rect().x - self.rect.topleft[0], wallMask.get_rect().y - self.rect.topleft[1]
                 pos=self.getMask().overlap(wallMask,offset)
                 if pos is not None:
-                    #print(f"collide pos is {pos[0], pos[1]}")
-                #collided_walls = pygame.sprite.spritecollide(self, walls, False)
+                    #print(f"collide pos is {pos[0], pos[1]}")                #collided_walls = pygame.sprite.spritecollide(self, walls, False)
                 #if len(collided_walls):
                     self.x += PLAYER_SPEED
             self.state = 2
@@ -143,8 +140,7 @@ class Player(pygame.sprite.Sprite):
                 offset = wallMask.get_rect().x - self.rect.topleft[0], wallMask.get_rect().y - self.rect.topleft[1]
                 pos = self.getMask().overlap(wallMask, offset)
                 if pos is not None:
-                    #print(f"collide pos is {pos[0], pos[1]}")
-                #if len(pygame.sprite.spritecollide(self, walls, False)):
+                    #print(f"collide pos is {pos[0], pos[1]}")                #if len(pygame.sprite.spritecollide(self, walls, False)):
                     self.x -= PLAYER_SPEED
             self.state = 3
             self.change += 1
