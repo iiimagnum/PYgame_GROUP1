@@ -15,7 +15,6 @@ class Player(pygame.sprite.Sprite):
         self.power = 100
         self.health = health
         self.images = []
-        self.soils_count = 0
         for i in range(0, 4):
             collect = []
             for j in range(0, 4):

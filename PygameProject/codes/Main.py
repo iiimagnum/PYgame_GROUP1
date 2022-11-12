@@ -45,6 +45,8 @@ def main():
     pygame.init()
     next_level = 0
     score = 0
+    soil_count = 0
+    fruit_count = 0
     fonts = pygame.font.get_fonts()
     font = pygame.font.SysFont(fonts[0], 40)
     font.bold = True
@@ -120,9 +122,16 @@ def main():
                 sound_dash.playing = False
 
             if pygame.K_b in InputManager.keyDownList:
-                if player.soils_count > 0:
+                if soil_count > 0:
                     Soils.add(Soil(player.rect.centerx, player.rect.centery))
-                    player.soils_count -= 1
+                    soil_count -= 1
+            if pygame.K_n in InputManager.keyDownList:
+                if fruit_count > 0:
+                    fruit_count -= 1
+                    if player.health <= 80:
+                        player.health += 20
+                    else:
+                        player.health = 100
 
             '''Maze'''
             maze.draw(MainSurface)
@@ -150,6 +159,14 @@ def main():
                         next_level = 1
                         health = player.health
                         break
+                    elif ip.type == InteractType.Soil:
+                        maze.InteractPointList.remove(ip)
+                        if soil_count < 3:
+                            soil_count += 1
+                    elif ip.type == InteractType.Fruit:
+                        maze.InteractPointList.remove(ip)
+                        if fruit_count < 3:
+                            fruit_count += 1
 
             if next_level:
                 sound_pass.play()
@@ -158,7 +175,10 @@ def main():
 
             Soils.draw(MainSurface)
             player.draw(MainSurface)
-            textSurface = font.render(str(score), True, (255, 255, 255))
+            textSurface = font.render("Score: " + str(score), True, (255, 255, 255))
+            width, height = font.size("Score: " + str(score))
+            soil_count_surface = font.render(": " + str(soil_count), True, (255, 255, 255))
+            fruit_count_surface = font.render(": " + str(fruit_count), True, (255, 255, 255))
             [m.draw(MainSurface) for m in monster_list]
 
 
@@ -170,7 +190,15 @@ def main():
             player.getMask()
             MainSurface.blit(wallsSurface,wallsSurface.get_rect())
             """
-            MainSurface.blit(textSurface, (10, 10))
+            MainSurface.blit(textSurface, (840 - width - 5, 5))
+            img = pygame.image.load("../images/props/soil_water.png").convert_alpha()
+            img.set_colorkey((255, 255, 255))
+            MainSurface.blit(img, (5, 5))
+            MainSurface.blit(soil_count_surface, (50, 3))
+            img = pygame.image.load("../images/interactPoint/fruit_item.png").convert_alpha()
+            img.set_colorkey((255, 255, 255))
+            MainSurface.blit(img, (130, 7))
+            MainSurface.blit(fruit_count_surface, (165, 3))
             pygame.display.flip()
 
 
