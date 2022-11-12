@@ -35,8 +35,26 @@ class Treasure(InteractPoint):
     def Interact(self):
         pass
 
+class Soil_ip(InteractPoint):
+    def __init__(self,position):
+        InteractPoint.__init__(self,position,InteractType['Soil'],"soil_item.png")
+        self.img = pygame.transform.scale(self.img, (20, 20))
+        self.img.set_colorkey((255, 255, 255))
+
+    def Interact(self):
+        pass
+
+class Fruit_ip(InteractPoint):
+    def __init__(self,position):
+        InteractPoint.__init__(self,position,InteractType['Fruit'],"fruit_item.png")
+        self.img = pygame.transform.scale(self.img, (30, 30))
+        self.img.set_colorkey((255, 255, 255))
+
+    def Interact(self):
+        pass
 
 class InteractType(Enum):
     Exit=1
     Treasure=2
-    Item=3
+    Soil=3
+    Fruit=4

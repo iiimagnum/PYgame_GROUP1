@@ -175,7 +175,7 @@ class Maze:
                             self.CurrentMazeInfo[i,j]=MazeCell((i,j),0,obstacleValue)
 
         #Add the interact point
-        self.SummonInteractPoint(3)
+        self.SummonInteractPoint(3, 1, 1)
 
         pass
 
@@ -186,7 +186,12 @@ class Maze:
                 drawSurface.blit(self.CurrentMazeInfo[y,x].img,self.CurrentMazeInfo[y,x].rect)
 
         for ip in self.InteractPointList:
-            drawSurface.blit(ip.img,ip.rect)
+            if ip.type == InteractType.Soil:
+                drawSurface.blit(ip.img, (ip.rect.centerx - 10, ip.rect.centery - 10))
+            elif ip.type == InteractType.Fruit:
+                drawSurface.blit(ip.img, (ip.rect.centerx - 15, ip.rect.centery - 15))
+            else:
+                drawSurface.blit(ip.img, ip.rect)
         surface.blit(drawSurface,drawSurface.get_rect())
 
     def __RemoveWall__(self,maze,RemoveNum):
@@ -308,7 +313,7 @@ class Maze:
 
         return maze
 
-    def SummonInteractPoint(self,treasureNum):
+    def SummonInteractPoint(self,treasureNum,soilNum,fruitNum):
         while treasureNum>0:
             treasureNum-=1
             while True:
@@ -317,6 +322,28 @@ class Maze:
                 if self.CurrentMazeInfo[y,x].cellType==1:
                     self.CurrentMazeInfo[y,x].cellType=2
                     ip=Treasure((y,x))
+                    self.InteractPointList.append(ip)
+                    break
+
+        while soilNum>0:
+            soilNum-=1
+            while True:
+                x=random.randint(1,MAZE_X*2)
+                y=random.randint(1,MAZE_Y*2)
+                if self.CurrentMazeInfo[y,x].cellType==1:
+                    self.CurrentMazeInfo[y,x].cellType=2
+                    ip=Soil_ip((y,x))
+                    self.InteractPointList.append(ip)
+                    break
+
+        while fruitNum>0:
+            fruitNum-=1
+            while True:
+                x=random.randint(1,MAZE_X*2)
+                y=random.randint(1,MAZE_Y*2)
+                if self.CurrentMazeInfo[y,x].cellType==1:
+                    self.CurrentMazeInfo[y,x].cellType=2
+                    ip=Fruit_ip((y,x))
                     self.InteractPointList.append(ip)
                     break
 
