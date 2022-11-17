@@ -44,6 +44,12 @@ def main():
     health = 100
     pygame.init()
     next_level = 0
+    score = 0
+    soil_count = 0
+    fruit_count = 0
+    fonts = pygame.font.get_fonts()
+    font = pygame.font.SysFont(fonts[0], 40)
+    font.bold = True
     clock = pygame.time.Clock()
     running = True
     MainSurface = pygame.display.set_mode(((MAZE_X * 2 + 1) * CellSize, (MAZE_Y * 2 + 1) * CellSize))  # main surface
@@ -56,6 +62,7 @@ def main():
         monster_list = maze.SummonMonster(1)
         maze_info = maze.CurrentMazeInfo
         wall_group = pygame.sprite.Group()
+        Soils = pygame.sprite.Group()
         for i in range(MAZE_Y * 2 + 1):
             for j in range(MAZE_X * 2 + 1):
                 if maze.CurrentMazeInfo[i, j].cellType == 0:
@@ -75,7 +82,7 @@ def main():
         sound_pass = Sound('..\sound\Pass.wav')
 
         '''Player'''
-        player = Player(60, 60)
+        player = Player(60, 60, health)
         switch_map_after(MainSurface, maze, player, monster_list)
         warFog=WarFogMaze(maze)
         while running:
@@ -114,9 +121,23 @@ def main():
                 space = False
                 sound_dash.playing = False
 
+            if pygame.K_b in InputManager.keyDownList:
+                if soil_count > 0:
+                    Soils.add(Soil(player.rect.centerx, player.rect.centery))
+                    soil_count -= 1
+            if pygame.K_n in InputManager.keyDownList:
+                if fruit_count > 0:
+                    fruit_count -= 1
+                    if player.health <= 80:
+                        player.health += 20
+                    else:
+                        player.health = 100
+
             '''Maze'''
             maze.draw(MainSurface)
-
+            '''soil'''
+            for m in monster_list:
+                Soils.update(m, player)
             '''Player'''
             player.update(space, up, down, left, right, wallMask)
 
@@ -132,16 +153,32 @@ def main():
                     if ip.type == InteractType.Treasure:
                         sound_treasure.play()
                         maze.InteractPointList.remove(ip)
+                        score += 1
                     elif ip.type == InteractType.Exit:
                         # print("exit")
                         next_level = 1
+                        health = player.health
                         break
+                    elif ip.type == InteractType.Soil:
+                        maze.InteractPointList.remove(ip)
+                        if soil_count < 3:
+                            soil_count += 1
+                    elif ip.type == InteractType.Fruit:
+                        maze.InteractPointList.remove(ip)
+                        if fruit_count < 3:
+                            fruit_count += 1
 
             if next_level:
                 sound_pass.play()
                 switch_map_before(MainSurface, maze, player, monster_list)
                 break
+
+            Soils.draw(MainSurface)
             player.draw(MainSurface)
+            textSurface = font.render("Score: " + str(score), True, (255, 255, 255))
+            width, height = font.size("Score: " + str(score))
+            soil_count_surface = font.render(": " + str(soil_count), True, (255, 255, 255))
+            fruit_count_surface = font.render(": " + str(fruit_count), True, (255, 255, 255))
             [m.draw(MainSurface) for m in monster_list]
 
 
@@ -153,6 +190,15 @@ def main():
             player.getMask()
             MainSurface.blit(wallsSurface,wallsSurface.get_rect())
             """
+            MainSurface.blit(textSurface, (840 - width - 5, 5))
+            img = pygame.image.load("../images/props/soil_water.png").convert_alpha()
+            img.set_colorkey((255, 255, 255))
+            MainSurface.blit(img, (5, 5))
+            MainSurface.blit(soil_count_surface, (50, 3))
+            img = pygame.image.load("../images/interactPoint/fruit_item.png").convert_alpha()
+            img.set_colorkey((255, 255, 255))
+            MainSurface.blit(img, (130, 7))
+            MainSurface.blit(fruit_count_surface, (165, 3))
             pygame.display.flip()
 
 
