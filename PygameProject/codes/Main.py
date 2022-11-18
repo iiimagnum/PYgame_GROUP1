@@ -44,6 +44,7 @@ def main():
     health = 100
     pygame.init()
     next_level = 0
+    level_passed = 0
     score = 0
     soil_count = 0
     fruit_count = 0
@@ -59,7 +60,7 @@ def main():
         next_level = 0
         maze = Maze()
         maze.SummonMaze()
-        monster_list = maze.SummonMonster(1)
+        monster_list = maze.SummonMonster(int(level_passed / 5) + 1)
         maze_info = maze.CurrentMazeInfo
         wall_group = pygame.sprite.Group()
         Soils = pygame.sprite.Group()
@@ -86,6 +87,7 @@ def main():
         switch_map_after(MainSurface, maze, player, monster_list)
         warFog=WarFogMaze(maze)
         while running:
+            accumulated_threat = 0
             clock.tick(60)
             InputManager.update()
             if InputManager.keyDownList.__contains__(pygame.K_ESCAPE) or InputManager.keyDownList.__contains__(pygame.K_q):
@@ -94,21 +96,25 @@ def main():
                 pygame.quit()
             if pygame.K_UP in InputManager.keyPressList:
                 up = True
+                accumulated_threat += 2
             else:
                 up = False
 
             if pygame.K_DOWN in InputManager.keyPressList:
                 down = True
+                accumulated_threat += 2
             else:
                 down = False
 
             if pygame.K_LEFT in InputManager.keyPressList:
                 left = True
+                accumulated_threat += 2
             else:
                 left = False
 
             if pygame.K_RIGHT in InputManager.keyPressList:
                 right = True
+                accumulated_threat += 2
             else:
                 right = False
 
@@ -116,6 +122,7 @@ def main():
                 space = True
                 sound_dash.play()
                 sound_dash.playing = True
+                accumulated_threat += 5
                 # print("space")
             else:
                 space = False
@@ -123,10 +130,12 @@ def main():
 
             if pygame.K_b in InputManager.keyDownList:
                 if soil_count > 0:
+                    accumulated_threat += 1000
                     Soils.add(Soil(player.rect.centerx, player.rect.centery))
                     soil_count -= 1
             if pygame.K_n in InputManager.keyDownList:
                 if fruit_count > 0:
+                    accumulated_threat += 1000
                     fruit_count -= 1
                     if player.health <= 80:
                         player.health += 20
@@ -142,6 +151,7 @@ def main():
             player.update(space, up, down, left, right, wallMask)
 
             '''Monsters'''
+            [m.add_threat(player, accumulated_threat) for m in monster_list]
             [m.update(player, wall_group, maze_info) for m in monster_list]
 
             if player.health <= 0:
@@ -170,6 +180,7 @@ def main():
 
             if next_level:
                 sound_pass.play()
+                level_passed += 1
                 switch_map_before(MainSurface, maze, player, monster_list)
                 break
 
