@@ -113,10 +113,10 @@ class WarFogMaze:
                     self.fogMaze[iy, ix].hasVisited = True
                     stack.append((iy, ix, curDis + 1))
 
-        for y in range(MAZE_Y * 2 ):
-            for x in range(MAZE_X * 2 + 1):
+        for y in range(1,MAZE_Y * 2 ):
+            for x in range(1,MAZE_X * 2):
                 if (y,x) in passList:
-                    print(f"Now pass{(y,x)}")
+                    #print(f"Now pass{(y,x)}")
                     continue
                 else:
                     self.fogMaze[y,x].draw(surface)
