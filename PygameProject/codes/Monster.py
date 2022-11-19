@@ -37,6 +37,7 @@ class Monster(pygame.sprite.Sprite):
         self.rect.center = (self.x, self.y)
         self.atk_cd = 0
         self.atk_sound = Sound('..\sound\MonsterAttack.wav')
+        self.threat = 0
 
     def find_path(self, target, maze_info):
         target_col, target_row = target
@@ -74,7 +75,20 @@ class Monster(pygame.sprite.Sprite):
         # print(path)
         return path[-3] # Reverse order; -1: None, -2: current block, -3: next block
 
-
+    def add_threat(self, player, value):
+        des_x = player.rect.centerx
+        des_y = player.rect.centery
+        delta_x = des_x - self.rect.centerx
+        delta_y = des_y - self.rect.centery
+        distance = math.sqrt(delta_y ** 2 + delta_x ** 2)
+        if distance <= MONSTER_VIEW_DISTANCE:
+            if self.threat <= int(MONSTER_THREAD_THRESHOLD / 2):
+                self.threat = int(MONSTER_THREAD_THRESHOLD / 2) + MONSTER_THREAD_NATURAL_DECAY
+            else:
+                if self.threat < MONSTER_THREAD_MAX:
+                    self.threat += value
+                else:
+                    self.threat = MONSTER_THREAD_MAX
 
     def update(self, player, walls, maze_info):
         des_x = player.rect.centerx
@@ -85,7 +99,11 @@ class Monster(pygame.sprite.Sprite):
         origin_x = self.x
         origin_y = self.y
 
-        if distance > 0 and distance <= MONSTER_VIEW_DISTANCE:
+        self.add_threat(player, int(MONSTER_THREAD_NATURAL_DECAY / 2))
+        self.threat = self.threat - MONSTER_THREAD_NATURAL_DECAY if self.threat > 0 else 0
+        print(self.threat)
+
+        if distance > 0 and MONSTER_THREAD_THRESHOLD <= self.threat:
             player_block_pos = (int(des_x / CellSize), int(des_y / CellSize))
             if player_block_pos != (self.block_x, self.block_y):
                 next_block_col, next_block_row = self.find_path(player_block_pos, maze_info)
