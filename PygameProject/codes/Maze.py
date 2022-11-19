@@ -319,7 +319,7 @@ class Maze:
             while True:
                 x=random.randint(1,MAZE_X*2)
                 y=random.randint(1,MAZE_Y*2)
-                if self.CurrentMazeInfo[y,x].cellType==1:
+                if self.CurrentMazeInfo[y,x].cellType==1and pow(y-1,2)+pow(x-1,2)>10:
                     self.CurrentMazeInfo[y,x].cellType=2
                     ip=Treasure((y,x))
                     self.InteractPointList.append(ip)
@@ -330,7 +330,7 @@ class Maze:
             while True:
                 x=random.randint(1,MAZE_X*2)
                 y=random.randint(1,MAZE_Y*2)
-                if self.CurrentMazeInfo[y,x].cellType==1:
+                if self.CurrentMazeInfo[y,x].cellType==1and pow(y-1,2)+pow(x-1,2)>10:
                     self.CurrentMazeInfo[y,x].cellType=2
                     ip=Soil_ip((y,x))
                     self.InteractPointList.append(ip)
@@ -341,7 +341,7 @@ class Maze:
             while True:
                 x=random.randint(1,MAZE_X*2)
                 y=random.randint(1,MAZE_Y*2)
-                if self.CurrentMazeInfo[y,x].cellType==1:
+                if self.CurrentMazeInfo[y,x].cellType==1 and pow(y-1,2)+pow(x-1,2)>10:
                     self.CurrentMazeInfo[y,x].cellType=2
                     ip=Fruit_ip((y,x))
                     self.InteractPointList.append(ip)
@@ -350,7 +350,7 @@ class Maze:
         while True:
             x = random.randint(1, MAZE_X * 2)
             y = random.randint(1, MAZE_Y * 2)
-            if self.CurrentMazeInfo[y, x].cellType == 1:
+            if self.CurrentMazeInfo[y, x].cellType == 1 and pow(y-1,2)+pow(x-1,2)>20:
                 self.CurrentMazeInfo[y, x].cellType = 2
                 ex=ExitPoint((y,x))
                 self.InteractPointList.append(ex)

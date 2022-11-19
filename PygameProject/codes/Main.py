@@ -20,11 +20,12 @@ def switch_map_before(surface, maze, player, monster_list):
 
 
 
-def switch_map_after(surface, maze, player, monster_list):
+def switch_map_after(surface, maze, player, monster_list,fog):
     for y in range(0, 300):
         maze.draw(surface)
         player.draw(surface)
         [m.draw(surface) for m in monster_list]
+        fog.draw(surface,player.rect.center)
         pygame.draw.rect(surface, [0, 0, 0], [0, 0, 840, 300 - y], 0)
         pygame.draw.rect(surface, [0, 0, 0], [0, 300 + y, 840, 300 - y], 0)
         pygame.display.flip()
@@ -63,6 +64,7 @@ def main():
         maze_info = maze.CurrentMazeInfo
         wall_group = pygame.sprite.Group()
         Soils = pygame.sprite.Group()
+
         for i in range(MAZE_Y * 2 + 1):
             for j in range(MAZE_X * 2 + 1):
                 if maze.CurrentMazeInfo[i, j].cellType == 0:
@@ -83,8 +85,13 @@ def main():
 
         '''Player'''
         player = Player(60, 60, health)
-        switch_map_after(MainSurface, maze, player, monster_list)
-        warFog=WarFogMaze(maze)
+
+        '''WarFog'''
+        warFog = WarFogMaze(maze)
+        warFog.update(player.rect.center)
+
+        switch_map_after(MainSurface, maze, player, monster_list,warFog)
+
         while running:
             clock.tick(60)
             InputManager.update()
