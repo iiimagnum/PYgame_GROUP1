@@ -350,7 +350,7 @@ def main():
             MazeInfo = RemoveWall(MazeInfo, 30)
         if Inp.InputManager.keyDownList.__contains__(pygame.K_3):
             MazeInfo = DFS()
-            MazeInfo = RemoveWallPJVersion(MazeInfo, 4)
+            MazeInfo = RemoveWallPJVersion(MazeInfo,4)
 
         drawSurface = DrawMaze(MazeInfo)
         MainSurface.blit(drawSurface, drawSurface.get_rect())
